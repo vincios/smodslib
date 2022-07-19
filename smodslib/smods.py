@@ -5,9 +5,9 @@ from urllib.parse import urlparse, parse_qs
 import requests
 from bs4 import BeautifulSoup, element, Tag
 
-from model import ModDependency, ModBase, ModRevision, ModCatalogueItem, FullMod
-from exceptions import NoResultError
-from utils import parse_time
+from .model import ModDependency, ModBase, ModRevision, ModCatalogueItem, FullMod
+from .exceptions import NoResultError
+from .utils import parse_time
 
 
 def _get_mod_bs(sky_id_or_bs: Union[str, BeautifulSoup, Tag]) -> BeautifulSoup:
