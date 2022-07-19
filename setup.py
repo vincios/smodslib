@@ -15,7 +15,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
 # This call to setup() does all the work
 setup(
     name="smodslib",
-    version="0.1.0",
+    version="0.1.2",
     description="A Skymods.ru automation library",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -24,5 +24,5 @@ setup(
     author_email="",
     license="MIT",
     packages=["smodslib"],
-    install_requires=["requests", "beautifulsoup4"]
+    install_requires=["requests", "beautifulsoup4", "cloudscraper"]
 )

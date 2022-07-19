@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-import requests
+import cloudscraper
 
 from .exceptions import UnsupportedHostError
 from .model import ModBase
@@ -26,7 +26,8 @@ def generate_download_url(mod: ModBase):
 
     if hostname == "uploadfiles.eu":
         # if hosting service is uploadfiles.eu we have to follow two redirects
-        with requests.get(mod_url, allow_redirects=False) as r:
+        scraper = cloudscraper.create_scraper()
+        with scraper.get(mod_url, allow_redirects=False) as r:
             r.raise_for_status()
             mod_url = r.headers['Location']
 
@@ -45,7 +46,8 @@ def generate_download_url(mod: ModBase):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
-    with requests.post(mod_url, headers=headers, data=data, allow_redirects=False) as r:
+    scraper = cloudscraper.create_scraper()
+    with scraper.post(mod_url, data=data, allow_redirects=False) as r:
         r.raise_for_status()
         download_url = r.headers['Location']
 
