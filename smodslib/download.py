@@ -4,8 +4,14 @@ import cloudscraper
 
 from .exceptions import UnsupportedHostError
 from .model import ModBase
+from .smods import create_mod_base_from_id
 
 SUPPORTED_HOSTS = ["modsbase.com", "uploadfiles.eu"]
+
+
+def generate_download_url_from_id(sky_id: str) -> str:
+    mod = create_mod_base_from_id(sky_id)
+    return generate_download_url(mod)
 
 
 def generate_download_url(mod: ModBase):
