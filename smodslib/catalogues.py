@@ -13,9 +13,10 @@ def search(query: str, page: int = 0, filters: CatalogueParameters = None) -> li
     The result can boe filtered using filters parameters.
 
     The result is always paginated: the method returns only the first 10 results. If more results are needed, so a new
-    call of this method must be performed, incrementing the page parameter
+    call of this method must be performed, incrementing the page parameter. Note that page numbers starts from 1.
+
     :param query: Keyword to search
-    :param page: pagination page
+    :param page: pagination page number, starting from 1
     :param filters: filters to apply to the results
     :return: up to 10 catalogue items
     """
