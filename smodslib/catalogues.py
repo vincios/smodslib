@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 
 import requests
 
-from model import CatalogueParameters, ModCatalogueItem
-from smods import create_catalogue_item_from_catalogue_result
+from .model import CatalogueParameters, ModCatalogueItem
+from .smods import create_catalogue_item_from_catalogue_result
 
 
 def search(query: str, page: int = 0, filters: CatalogueParameters = None) -> list[ModCatalogueItem]:
@@ -26,7 +26,8 @@ def search(query: str, page: int = 0, filters: CatalogueParameters = None) -> li
 
     if filters:
         for key, value in filters.items():
-            parameters[key] = value.value
+            if value:
+                parameters[key] = value.value
 
     url_path = "/" if not page else f"/page/{page}"
     url_query = urlencode(parameters)
