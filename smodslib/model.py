@@ -8,7 +8,12 @@ class ModRevision(object):
     def __init__(self, date: datetime, url: str) -> None:
         self.date = date
         self.download_url = url
-        self.name = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
+
+        name = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
+        if name.endswith("_"):
+            name = name[:-1]  # remove the eventual trailing _ character
+
+        self.name = name
 
 
 class ModBase(object):
