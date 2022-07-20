@@ -5,10 +5,10 @@ from .utils import StrEnum
 
 
 class ModRevision(object):
-    def __init__(self, name: str, date: datetime, url: str) -> None:
-        self.name = name
+    def __init__(self, date: datetime, url: str) -> None:
         self.date = date
         self.download_url = url
+        self.name = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
 
 
 class ModBase(object):
