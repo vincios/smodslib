@@ -488,7 +488,7 @@ def create_full_mod(url: str) -> FullMod:
 
     # revisions
     latest_revision, old_revisions = get_mod_revisions(bs)
-    mod.revisions = old_revisions + [latest_revision]
+    mod.other_revisions = old_revisions
 
     # image
     mod.image_url = get_mod_image_url(bs)
