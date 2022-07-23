@@ -78,7 +78,7 @@ def create_mod_base_from_catalogue_page(bs_article_element: Tag) -> ModBase:
     if "%Y" not in matched_template:
         revision_date = revision_date.replace(year=datetime.now().year)
     revision_url = download_button['href']
-    revision = ModRevision(revision_date, revision_url)
+    revision = ModRevision(revision_text, revision_date, revision_url)
 
     # published date property
     published_date_text = bs_article_element.find("time", class_="published")["datetime"]
@@ -344,7 +344,7 @@ def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevis
                 date = date.replace(year=datetime.now().year)
 
             download_url = item['href']
-            revision = ModRevision(date, download_url)
+            revision = ModRevision(name, date, download_url)
             old_revisions.append(revision)
 
     # last revision
@@ -354,7 +354,7 @@ def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevis
     if "%Y" not in matched_template:
         date = date.replace(year=datetime.now().year)
     download_url = download_box.find("a", class_="skymods-excerpt-btn")['href']
-    latest_revision = ModRevision(date, download_url)
+    latest_revision = ModRevision(name, date, download_url)
 
     return latest_revision, old_revisions
 

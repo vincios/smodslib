@@ -5,15 +5,18 @@ from .utils import StrEnum
 
 
 class ModRevision(object):
-    def __init__(self, date: datetime, url: str) -> None:
+    def __init__(self, name, date: datetime, url: str) -> None:
+        self.name = name
         self.date = date
         self.download_url = url
+        filename = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
+        if filename.endswith("_"):
+            filename = filename[:-1]  # remove the eventual trailing _ character
 
-        name = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
-        if name.endswith("_"):
-            name = name[:-1]  # remove the eventual trailing _ character
+        self.filename = filename
 
-        self.name = name
+    def __repr__(self):
+        return f"{self.name} | {self.filename} | {self.download_url}"
 
 
 class ModBase(object):
