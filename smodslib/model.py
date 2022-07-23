@@ -223,15 +223,12 @@ class FullMod(ModBase):
         self._mod_requirements = value
 
     @property
-    def revisions(self) -> list[ModRevision]:
+    def other_revisions(self) -> list[ModRevision]:
         return self._revisions
 
-    @revisions.setter
-    def revisions(self, value: list[ModRevision]):
+    @other_revisions.setter
+    def other_revisions(self, value: list[ModRevision]):
         if value:
-            if self.latest_revision and self.latest_revision not in value:
-                value.append(self.latest_revision)
-
             sorted(value, key=lambda item: item.date)
 
         self._revisions = value
@@ -274,7 +271,7 @@ class FullMod(ModBase):
                  published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
                  description: str = None, plain_description: str = None, updated_date: datetime = None,
                  dlc_requirements: list[str] = None, mod_requirements: list[ModBase] = None,
-                 revisions: list[ModRevision] = None, tags: list[str] = None,
+                 other_revisions: list[ModRevision] = None, tags: list[str] = None,
                  category: str = None, image_url: str = None, rating: int = None) -> None:
         super().__init__(name, sky_id, steam_id, authors, size, published_date, has_dependencies,
                          latest_revision)
@@ -283,7 +280,7 @@ class FullMod(ModBase):
         self.updated_date = updated_date
         self.dlc_requirements = dlc_requirements
         self.mod_requirements = mod_requirements
-        self.revisions = revisions
+        self.other_revisions = other_revisions
         self.tags = tags
         self.category = category
         self.image_url = image_url
