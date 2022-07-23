@@ -384,7 +384,8 @@ def get_mod_tags(sky_id_or_bs: Union[str, BeautifulSoup]) -> list[str]:
     """
 
     bs = _get_mod_bs(sky_id_or_bs)
-    return [a['href'] for a in bs.find("p", class_="post-tags").find_all("a")]
+    tags_box = bs.find("p", class_="post-tags")
+    return [a['href'] for a in tags_box.find_all("a")] if tags_box else []
 
 
 def get_mod_category(sky_id_or_bs: Union[str, BeautifulSoup]) -> str:
