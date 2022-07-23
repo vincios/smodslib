@@ -356,7 +356,7 @@ def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevis
     download_url = download_box.find("a", class_="skymods-excerpt-btn")['href']
     latest_revision = ModRevision(name, date, download_url)
 
-    return latest_revision, old_revisions
+    return latest_revision, sorted(old_revisions, key=lambda itm: itm.date)
 
 
 def get_mod_image_url(sky_id_or_bs: Union[str, BeautifulSoup]) -> str:
