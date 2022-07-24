@@ -315,7 +315,7 @@ def get_mod_dependencies(sky_id_or_bs: Union[str, BeautifulSoup]) -> Optional[li
     return None
 
 
-def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevision, list[ModRevision]]:
+def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevision, Union[list[ModRevision], None]]:
     """
     Fetch the revisions list of the given Mod id or BeautifulSoup page. The latest revision will be returned as separate
     object
@@ -347,6 +347,8 @@ def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevis
             revision = ModRevision(name, date, download_url)
             old_revisions.append(revision)
 
+    old_revisions = sorted(old_revisions, key=lambda itm: itm.date) if old_revisions else None
+
     # last revision
     name = infobox.find(text="Last revision:").parent.parent.find("span", class_="skymods-item-date").text.replace(
         "UTC", "").strip()
@@ -356,7 +358,7 @@ def get_mod_revisions(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[ModRevis
     download_url = download_box.find("a", class_="skymods-excerpt-btn")['href']
     latest_revision = ModRevision(name, date, download_url)
 
-    return latest_revision, sorted(old_revisions, key=lambda itm: itm.date)
+    return latest_revision, old_revisions
 
 
 def get_mod_image_url(sky_id_or_bs: Union[str, BeautifulSoup]) -> str:

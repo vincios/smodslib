@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime
 from typing import TypedDict, Union
 
@@ -5,18 +6,37 @@ from .utils import StrEnum
 
 
 class ModRevision(object):
-    def __init__(self, name, date: datetime, url: str) -> None:
-        self.name = name
-        self.date = date
-        self.download_url = url
-        filename = url.split("/")[-1].replace(".html", "").replace(".zip", "").strip()
-        if filename.endswith("_"):
-            filename = filename[:-1]  # remove the eventual trailing _ character
+    @classmethod
+    def hash(cls, string: str):
+        return hashlib.md5(string.encode('utf-8'), usedforsecurity=False).hexdigest()[:10]
 
-        self.filename = filename
+    @property
+    def id(self) -> str:
+        return ModRevision.hash(self.name)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def date(self) -> datetime:
+        return self._date
+
+    @property
+    def download_url(self) -> str:
+        return self._download_url
+
+    @property
+    def filename(self) -> str:
+        return self.download_url.split("/")[-1].replace(".html", "").strip()
+
+    def __init__(self, name: str, date: datetime, url: str) -> None:
+        self._name = name
+        self._date = date
+        self._download_url = url
 
     def __repr__(self):
-        return f"{self.name} | {self.filename} | {self.download_url}"
+        return f"{self.id} | {self.name} | {self.filename} | {self.download_url}"
 
 
 class ModBase(object):
