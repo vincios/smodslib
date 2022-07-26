@@ -14,12 +14,12 @@ SUPPORTED_HOSTS = ["modsbase.com", "uploadfiles.eu"]
 
 def generate_download_url_from_id(sky_id: str) -> str:
     mod = create_mod_base_from_id(sky_id)
-    return generate_download_url(mod)
+    return generate_download_url(mod.latest_revision)
 
 
-def generate_download_url(mod: ModBase):
+def generate_download_url(revision: ModRevision):
     """
-    Generate the download url of a given mod.
+    Generate the download url of a given mod revision.
 
     Mods are hosted on file hosting services (i.e. modsbase.com or uploadfiles.eu), this method generate the download
     url from the service that hosts the mod.
@@ -27,7 +27,7 @@ def generate_download_url(mod: ModBase):
     :param mod: Mod to download
     :return: The download url
     """
-    mod_url = mod.latest_revision.download_url
+    mod_url = revision.download_url
     hostname = urlparse(mod_url).hostname
 
     if hostname not in SUPPORTED_HOSTS:
