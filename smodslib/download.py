@@ -12,20 +12,20 @@ from .smods import create_mod_base_from_id
 SUPPORTED_HOSTS = ["modsbase.com", "uploadfiles.eu"]
 
 
-def generate_download_url_from_id(sky_id: str) -> str:
+def generate_download_url_from_id(sky_id: str) -> Union[str, int]:
     mod = create_mod_base_from_id(sky_id)
     return generate_download_url(mod.latest_revision)
 
 
-def generate_download_url(revision: ModRevision):
+def generate_download_url(revision: ModRevision) -> Union[str, int]:
     """
     Generate the download url of a given mod revision.
 
     Mods are hosted on file hosting services (i.e. modsbase.com or uploadfiles.eu), this method generate the download
     url from the service that hosts the mod.
 
-    :param mod: Mod to download
-    :return: The download url
+    :param revision: Mod to download
+    :return: The download url if success, a http error code in case of http error
     """
     mod_url = revision.download_url
     hostname = urlparse(mod_url).hostname
@@ -37,7 +37,10 @@ def generate_download_url(revision: ModRevision):
         # if hosting service is uploadfiles.eu we have to follow two redirects
         scraper = cloudscraper.create_scraper()
         with scraper.get(mod_url, allow_redirects=False) as r:
-            r.raise_for_status()
+            try:
+                r.raise_for_status()
+            except HTTPError as e:
+                return r.status_code
             mod_url = r.headers['Location']
 
     url_parts = mod_url.split('/')
@@ -57,14 +60,18 @@ def generate_download_url(revision: ModRevision):
 
     scraper = cloudscraper.create_scraper()
     with scraper.post(mod_url, data=data, allow_redirects=False) as r:
-        r.raise_for_status()
+        try:
+            r.raise_for_status()
+        except HTTPError as e:
+            return r.status_code
+
         download_url = r.headers['Location']
 
     return download_url
 
 
 def download_revision(download_url: str, download_path: str, progress_callback: Callable[[int, int], None] = None,
-                      error_callback: Callable[[int, str], None] = None) -> Union[str, None]:
+                      error_callback: Callable[[int, str], None] = None) -> Union[str, int]:
     """
     Tries to download a mod revision to a given download path. It tries to bypass cloudflare protection, but in case of
     failure, an error 403 will be raised from the error_callback. The progress_callback instead will be called when a
@@ -77,7 +84,7 @@ def download_revision(download_url: str, download_path: str, progress_callback: 
     :param download_path: path where the zipped file will be downloaded
     :param progress_callback: callback of type (downloaded_bytes: int, total_bytes: int) -> None
     :param error_callback: callback of type (http_error_code, error_content)
-    :return: The downloaded file path
+    :return: The downloaded file path if success, else http error code in case of http error
     """
     url_parts = download_url.split('/')
     local_filename = url_parts[-1]
@@ -99,8 +106,7 @@ def download_revision(download_url: str, download_path: str, progress_callback: 
         except HTTPError as e:
             if error_callback:
                 error_callback(r.status_code, str(e))
-
-            return None
+            return r.status_code
 
         total_length = r.headers.get('content-length')
 
