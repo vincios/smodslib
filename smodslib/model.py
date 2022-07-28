@@ -53,7 +53,7 @@ class ModBase(object):
         :return:
         """
         return cls(mod.name, mod.id, mod.steam_id, mod.authors, mod.size, mod.published_date,
-                   mod.has_dependencies, mod.latest_revision)
+                   mod.has_dependencies, mod.latest_revision, mod.category)
 
     @property
     def name(self) -> str:
@@ -129,6 +129,15 @@ class ModBase(object):
         self._latest_revision = value
 
     @property
+    def category(self) -> str:
+        """ Mod category """
+        return self._category
+
+    @category.setter
+    def category(self, value: str):
+        self._category = value
+
+    @property
     def steam_url(self) -> str:
         return f"https://steamcommunity.com/workshop/filedetails/?id={self.steam_id}"
 
@@ -137,7 +146,8 @@ class ModBase(object):
         return f"https://smods.ru/archives/{self.id}"
 
     def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]],
-                 size: str, published_date: datetime, has_dependencies: bool, latest_revision: ModRevision) -> None:
+                 size: str, published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
+                 category: str) -> None:
         self.name = name
         self.id = sky_id
         self.steam_id = steam_id
@@ -146,12 +156,13 @@ class ModBase(object):
         self.latest_revision = latest_revision
         self.published_date = published_date
         self.size = size
+        self.category = category
 
     def __str__(self) -> str:
-        return f"{self.id} | {self.name}"
+        return f"{self.id} | {self.name} [{self.category}]"
 
     def __repr__(self) -> str:
-        return f"{self.id} | {self.name}"
+        return f"{self.id} | {self.name} [{self.category}]"
 
 
 class ModDependency(ModBase):
@@ -168,7 +179,7 @@ class ModDependency(ModBase):
         :return:
         """
         return cls(mod.name, mod.id, mod.steam_id, mod.authors, mod.size, mod.published_date,
-                   mod.has_dependencies, mod.latest_revision)
+                   mod.has_dependencies, mod.latest_revision, mod.category)
 
     @property
     def required_by(self) -> list[ModBase]:
@@ -178,11 +189,11 @@ class ModDependency(ModBase):
     def required_by(self, value: list[ModBase]):
         self._required_by = value
 
-    def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]], size: str,
-                 published_date: datetime, has_dependencies: bool,
-                 latest_revision: ModRevision) -> None:
+    def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]],
+                 size: str, published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
+                 category: str) -> None:
         super().__init__(name, sky_id, steam_id, authors, size, published_date, has_dependencies,
-                         latest_revision, )
+                         latest_revision, category)
         self.required_by = []
 
 
@@ -200,7 +211,7 @@ class FullMod(ModBase):
         :return:
         """
         return cls(mod.name, mod.id, mod.steam_id, mod.authors, mod.size, mod.published_date,
-                   mod.has_dependencies, mod.latest_revision)
+                   mod.has_dependencies, mod.latest_revision, mod.category)
 
     @property
     def description(self) -> str:
@@ -262,15 +273,6 @@ class FullMod(ModBase):
         self._tags = value
 
     @property
-    def category(self) -> str:
-        """ Mod category """
-        return self._category
-
-    @category.setter
-    def category(self, value: str):
-        self._category = value
-
-    @property
     def image_url(self) -> str:
         """ Mod image url """
         return self._image_url
@@ -287,14 +289,14 @@ class FullMod(ModBase):
     def rating(self, value: bool):
         self._rating = value
 
-    def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]], size: str,
-                 published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
-                 description: str = None, plain_description: str = None, updated_date: datetime = None,
-                 dlc_requirements: list[str] = None, mod_requirements: list[ModBase] = None,
-                 other_revisions: list[ModRevision] = None, tags: list[str] = None,
-                 category: str = None, image_url: str = None, rating: int = None) -> None:
+    def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]],
+                 size: str, published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
+                 category: str, description: str = None, plain_description: str = None,
+                 updated_date: datetime = None, dlc_requirements: list[str] = None,
+                 mod_requirements: list[ModBase] = None, other_revisions: list[ModRevision] = None,
+                 tags: list[str] = None, image_url: str = None, rating: int = None) -> None:
         super().__init__(name, sky_id, steam_id, authors, size, published_date, has_dependencies,
-                         latest_revision)
+                         latest_revision, category)
         self.description = description
         self.plain_description = plain_description
         self.updated_date = updated_date
@@ -302,7 +304,6 @@ class FullMod(ModBase):
         self.mod_requirements = mod_requirements
         self.other_revisions = other_revisions
         self.tags = tags
-        self.category = category
         self.image_url = image_url
         self.rating = rating
 
@@ -374,16 +375,7 @@ class ModCatalogueItem(ModBase):
         :return:
         """
         return cls(mod.name, mod.id, mod.steam_id, mod.authors, mod.size, mod.published_date,
-                   mod.has_dependencies, mod.latest_revision)
-
-    @property
-    def category(self) -> str:
-        """ Mod category """
-        return self._category
-
-    @category.setter
-    def category(self, value: str):
-        self._category = value
+                   mod.has_dependencies, mod.latest_revision, mod.category)
 
     @property
     def image_url(self) -> str:
@@ -404,9 +396,8 @@ class ModCatalogueItem(ModBase):
 
     def __init__(self, name: str, sky_id: Union[str, int], steam_id: Union[str, int], authors: Union[str, list[str]], size: str,
                  published_date: datetime, has_dependencies: bool, latest_revision: ModRevision,
-                 category: str = None, image_url: str = None, rating: int = None) -> None:
+                 category: str, image_url: str = None, rating: int = None) -> None:
         super().__init__(name, sky_id, steam_id, authors, size, published_date, has_dependencies,
-                         latest_revision)
-        self.category = category
+                         latest_revision, category)
         self.image_url = image_url
         self.rating = rating

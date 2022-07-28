@@ -6,7 +6,7 @@ import cloudscraper
 from requests import HTTPError
 
 from .exceptions import UnsupportedHostError
-from .model import ModBase, ModRevision
+from .model import ModRevision
 from .smods import create_mod_base_from_id
 
 SUPPORTED_HOSTS = ["modsbase.com", "uploadfiles.eu"]

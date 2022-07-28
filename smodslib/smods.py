@@ -87,7 +87,10 @@ def create_mod_base_from_catalogue_page(bs_article_element: Tag) -> ModBase:
     # size property
     size = metadata_box.find("span", class_="skymods-item-file-size").text
 
-    return ModBase(name, sky_id, steam_id, authors, size, published_date, has_dependencies, revision)
+    # category property
+    category = bs_article_element.find("a", rel="category tag").text
+
+    return ModBase(name, sky_id, steam_id, authors, size, published_date, has_dependencies, revision, category)
 
 
 def create_mod_base_from_steam_id(steam_id: str) -> ModBase:
@@ -148,7 +151,10 @@ def create_mod_base_from_bs_page(bs: BeautifulSoup) -> ModBase:
     # size property
     size = get_mod_size(bs)
 
-    return ModBase(name, sky_id, steam_id, authors, size, published_date, has_dependencies, revision)
+    # category property
+    category = get_mod_category(bs)
+
+    return ModBase(name, sky_id, steam_id, authors, size, published_date, has_dependencies, revision, category)
 
 
 def get_mod_id_by_steam_id(steam_id: str) -> str:
@@ -515,8 +521,6 @@ def create_catalogue_item_from_catalogue_result(bs_article_element: Tag) -> ModC
 
     base_mod = create_mod_base_from_catalogue_page(bs_article_element)
     catalogue_mod = ModCatalogueItem.from_mod(base_mod)
-
-    catalogue_mod.category = bs_article_element.find("a", rel="category tag").text
 
     catalogue_mod.rating = len(bs_article_element.find("p", class_="skymods-item-rating")
                                .find_all("path", fill="#3b8dbd"))
