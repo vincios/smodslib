@@ -3,14 +3,14 @@ from typing import Optional, Union
 from urllib.parse import urlparse, parse_qs
 
 import requests
-from bs4 import BeautifulSoup, element, Tag
+from bs4 import BeautifulSoup, element
 
 from .model import ModDependency, ModBase, ModRevision, ModCatalogueItem, FullMod
 from .exceptions import NoResultError
 from .utils import parse_time
 
 
-def _get_mod_bs(sky_id_or_bs: Union[str, BeautifulSoup, Tag]) -> BeautifulSoup:
+def _get_mod_bs(sky_id_or_bs: Union[str, BeautifulSoup, element.Tag]) -> BeautifulSoup:
     """
     Analyze the input. If it is a Mod's id or a BeautifulSoup object, returns a BeautifulSoup object. Otherwise,
     throws an error.
@@ -22,7 +22,7 @@ def _get_mod_bs(sky_id_or_bs: Union[str, BeautifulSoup, Tag]) -> BeautifulSoup:
 
         page = requests.get(url)
         bs = BeautifulSoup(page.text, "html.parser")
-    elif isinstance(sky_id_or_bs, BeautifulSoup) or isinstance(sky_id_or_bs, Tag):
+    elif isinstance(sky_id_or_bs, BeautifulSoup) or isinstance(sky_id_or_bs, element.Tag):
         bs = sky_id_or_bs
     else:
         raise Exception("First argument must be a mod id or a BeautifulSoup object")
@@ -44,7 +44,7 @@ def _is_mod_in_list(mod: ModBase, mods_list: list[ModBase]) -> int:
     return -1
 
 
-def create_mod_base_from_catalogue_page(bs_article_element: Tag) -> ModBase:
+def create_mod_base_from_catalogue_page(bs_article_element: element.Tag) -> ModBase:
     """
     Create a ModBase object from a BeautifulSoup Tag element. This Tag element must be the html "article" tag of a
     Skymod catalogue page
@@ -211,7 +211,7 @@ def get_mod_description(sky_id_or_bs: Union[str, BeautifulSoup]) -> tuple[str, s
     plain_description = ""
 
     for tag in bs.next_siblings:
-        if isinstance(tag, element.Tag) and "class" in tag and tag["class"] == "skymods-single-after":
+        if isinstance(tag, element.Tag) and "class" in tag.attrs and "skymods-single-after" in tag["class"]:
             break
         else:
             description += str(tag)
@@ -511,7 +511,7 @@ def create_full_mod(url: str) -> FullMod:
     return mod
 
 
-def create_catalogue_item_from_catalogue_result(bs_article_element: Tag) -> ModCatalogueItem:
+def create_catalogue_item_from_catalogue_result(bs_article_element: element.Tag) -> ModCatalogueItem:
     """
     Create a ModCatalogueItem object from a BeautifulSoup Tag element. This Tag element must be the html "article" tag
     of a Skymod catalogue page
